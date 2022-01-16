@@ -9,14 +9,15 @@ use Illuminate\Support\Facades\Route;
 Route::post("/registration", [AuthController::class, 'register']);
 Route::post("/auth", [AuthController::class, 'login']);
 Route::get('/posts', [PostController::class, 'getPosts']);
+Route::get('/posts/{id}', [PostController::class, 'getPost']);
+Route::get('/posts/tag/{name}', [PostController::class, 'searchPost']);
 
 //Защищенные маршруты через API токен
 Route::group(['middleware' => ['auth:sanctum']], function() {
-//    Route::get('/user', function (Request $request) {
-//        return $request->user();
-//    });
-    Route::post('/posts', [PostController::class, 'create']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/posts', [PostController::class, 'create']);
+    Route::post('/posts/{id}', [PostController::class, 'update']);
+    Route::delete('/posts/{id}', [PostController::class, 'delete']);
 });
 
 
