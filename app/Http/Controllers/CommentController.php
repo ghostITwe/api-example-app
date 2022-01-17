@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class CommentController extends Controller
 {
-    //FIXME: спросить у Паши, как лушче реализовать
+
     public function createComment(Request $request, $id)
     {
         $post = Post::query()->with('comments')->find($id);
@@ -37,7 +37,7 @@ class CommentController extends Controller
         $comment = new Comment();
         $comment->text = $request['comment'];
 
-        if (isset($request['author']) && !Auth::check()) {
+        if (!Auth::check()) {
             $comment->name_guest = $request['author'];
         } else {
             $comment->author_id = Auth::id();

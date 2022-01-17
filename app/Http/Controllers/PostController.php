@@ -173,7 +173,6 @@ class PostController extends Controller
         $post->image = 'images/' . Storage::disk('public')->put('', $request->file('image'));
         $post->save();
 
-        //FIXME: Вспомнить как синхронизировать теги через sync()
         if (isset($request['tags'])) {
             $tags = explode(',',$request['tags']);
 
