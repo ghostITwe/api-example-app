@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    //FIXME: как можно переделать foreach
     public function searchPost($name)
     {
         $postsData = Post::query()
@@ -22,17 +21,15 @@ class PostController extends Controller
             ->get();
 
         $posts = [];
-        $tags = [];
-
-        foreach ($postsData as $postData) {
-            foreach ($postData->tags as $tag) {
-                $tags [] = $tag->name;
-            }
-        }
 
         foreach ($postsData as $key => $post) {
+            $tags = [];
+            foreach ($post->tags as $tag) {
+                $tags [] = $tag->name;
+            }
+            $date = new DateTime($post->created_at);
             $posts[$key]['title'] = $post->title;
-            $posts[$key]['datatime'] = $post->title;
+            $posts[$key]['datatime'] = $date->format('H:i d.m.Y');;
             $posts[$key]['anons'] = $post->anons;
             $posts[$key]['text'] = $post->text;
             $posts[$key]['tags'] = $tags;

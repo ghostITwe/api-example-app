@@ -19,6 +19,8 @@ class CreateCommentsTable extends Migration
             $table->bigInteger('author_id')->unsigned()->nullable();
             $table->text('text');
             $table->timestamps();
+
+            $table->foreign('author_id')->references('id')->on('users')->nullOnDelete();
         });
     }
 
