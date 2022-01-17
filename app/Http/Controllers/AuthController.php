@@ -48,7 +48,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => "Invalid authorization data"
-            ], 401);
+            ])->setStatusCode(401, 'Invalid authorization data');
         }
 
         $user = User::query()->where('name', $request['name'])->firstOrFail();
@@ -58,7 +58,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'token' => 'bearer-'.$token
-        ]);
+        ])->setStatusCode(200, 'Successful authorization');
     }
 
     public function logout(Request $request)

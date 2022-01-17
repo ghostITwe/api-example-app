@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -38,7 +40,7 @@ class PostController extends Controller
 
         return response()->json([
             $posts
-        ], 200);
+        ])->setStatusCode(200, 'Found posts');
     }
 
     //FIXME: Подумать как переделать массив. ДОГАДКА В 2:17 ночи select протестить
@@ -48,7 +50,7 @@ class PostController extends Controller
 
         return response()->json([
             'post_id' => $posts
-        ], 201);
+        ])->setStatusCode(200, 'List posts');
     }
 
     public function getPost($id)
@@ -61,7 +63,7 @@ class PostController extends Controller
         if (!$post) {
             return response()->json([
                 'message' => 'Post not found'
-            ], 404);
+            ])->setStatusCode(404, 'Post not found');
         }
 
         $tags = [];
@@ -74,9 +76,11 @@ class PostController extends Controller
 
         foreach ($post->comments as $key => $comment) {
             $commentDate = new DateTime($comment->created_at);
+            $user = User::query()->find($comment->author_id);
+
             $comments [$key]['comment_id'] = $comment->id;
             $comments [$key]['datatime'] = $commentDate->format('H:i d.m.Y');
-            $comments [$key]['author'] = $comment->author_id; //FIXME: переделать на тернарный оператор
+            $comments [$key]['author'] =  !empty($user) && $user->isAdmin() ? 'admin' : $comment->name_guest;
             $comments [$key]['comment'] = $comment->text;
         }
 
@@ -88,7 +92,7 @@ class PostController extends Controller
             'tags' => $tags,
             'image' => $post->image,
             'comments' => $comments
-        ], 200);
+        ])->setStatusCode(200, 'View Post');
     }
 
     public function create(Request $request)
@@ -152,7 +156,7 @@ class PostController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $validator->errors()
-            ],400);
+            ])->setStatusCode(400, 'Editing error');
         }
 
         $post = Post::query()->find($id);
@@ -207,14 +211,14 @@ class PostController extends Controller
         if (!$post) {
             return response()->json([
                 'message' => 'Post not found'
-            ],404);
+            ])->setStatusCode(404, 'Page not found');
         }
 
         $post->delete();
 
         return response()->json([
             'status' => true
-        ],201);
+        ])->setStatusCode(201, 'Successful delete');
     }
 
     private function createTag($name) {

@@ -16,9 +16,8 @@ Route::get('/posts', [PostController::class, 'getPosts']);
 Route::get('/posts/{id}', [PostController::class, 'getPost']);
 Route::get('/posts/tag/{name}', [PostController::class, 'searchPost']);
 
-//Работа с комментариями
+//Работа с комментариями public
 Route::post('/posts/{id}/comments', [CommentController::class, 'createComment']);
-//Route::post('/posts/{id}/comments', [CommentController::class, 'createComment']);
 
 //Защищенные маршруты через API токен
 Route::group(['middleware' => ['auth:sanctum']], function() {
@@ -26,6 +25,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('/posts', [PostController::class, 'create']);
     Route::post('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/posts/{id}', [PostController::class, 'delete']);
+    Route::delete('/posts/{post}/comments/{comment}', [CommentController::class, 'deleteComment']);
 });
 
 
