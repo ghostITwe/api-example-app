@@ -49,7 +49,7 @@ class PostController extends Controller
         $posts = Post::query()->with('tags')->get();
 
         return response()->json([
-            'post_id' => $posts
+            $posts
         ])->setStatusCode(200, 'List posts');
     }
 
